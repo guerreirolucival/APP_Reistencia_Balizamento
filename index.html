@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora de Resistência de Isolamento</title>
+  <style>
+    :root {
+      --bg-color: #f5f8fa;
+      --text-color: #333;
+      --card-bg: #fff;
+      --primary: #007bff;
+      --border-color: #ccc;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #1e1e1e;
+        --text-color: #eee;
+        --card-bg: #2b2b2b;
+        --primary: #4a90e2;
+        --border-color: #555;
+        --shadow: rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+
+    .container {
+      background: var(--card-bg);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px var(--shadow);
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+
+    .logo {
+      width: 120px;
+      height: auto;
+      margin-bottom: 15px;
+    }
+
+    h1 {
+      color: var(--primary);
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+      text-align: left;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      font-size: 16px;
+      background: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 10px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .resultado {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .historico {
+      margin-top: 30px;
+      width: 100%;
+      max-width: 420px;
+      background: var(--card-bg);
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px var(--shadow);
+    }
+
+    .historico h2 {
+      font-size: 18px;
+      color: var(--primary);
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 6px;
+      text-align: center;
+    }
+
+    th {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      justify-content: center;
+    }
+
+    .btn-small {
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .exportar {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .limpar {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .exportar:hover {
+      background-color: #218838;
+    }
+
+    .limpar:hover {
+      background-color: #b02a37;
+    }
+
+    footer {
+      margin-top: 30px;
+      font-size: 12px;
+      color: #888;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="logo.png" alt="Logo da Empresa" class="logo">
+    <h1>Calculadora de Resistência de Isolamento</h1>
+
+    <label for="tecnico">Técnico responsável:</label>
+    <input type="text" id="tecnico" placeholder="Nome do técnico" />
+
+    <label for="data">Data da medição:</label>
+    <input type="date" id="data" />
+
+    <label for="x">Quantidade de transformadores (x):</label>
+    <input type="number" id="x" placeholder="Ex: 20" />
+
+    <label for="y">Distância total do circuito (m) (y):</label>
+    <input type="number" id="y" placeholder="Ex: 1500" />
+
+    <label for="obs">Observações técnicas:</label>
+    <textarea id="obs" rows="3" placeholder="Ex: Medição realizada sob condições normais."></textarea>
+
+    <button onclick="calcular()">Calcular Resistência</button>
+
+    <div class="resultado" id="resultado"></div>
+  </div>
+
+  <div class="historico" id="historico">
+    <h2>📋 Histórico de medições</h2>
+    <div class="btn-container">
+      <button class="btn-small exportar" onclick="exportarCSV()">⬇️ Exportar CSV</button>
+      <button class="btn-small limpar" onclick="limparHistorico()">🗑️ Limpar Histórico</button>
+    </div>
+    <table id="tabelaHistorico">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Técnico</th>
+          <th>R (MΩ)</th>
+          <th>Obs</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <footer>
+    © <span id="ano"></span> Sua Empresa — Todos os direitos reservados.
+  </footer>
+
+  <script>
+    document.getElementById("ano").textContent = new Date().getFullYear();
+
+    // Carrega histórico salvo
+    const historico = JSON.parse(localStorage.getItem("historicoResistencia")) || [];
+    atualizarTabela();
+
+    function calcular() {
+      const tecnico = document.getElementById("tecnico").value.trim();
+      const data = document.getElementById("data").value;
+      const x = parseFloat(document.getElementById("x").value.replace(",", "."));
+      const y = parseFloat(document.getElementById("y").value.replace(",", "."));
+      const obs = document.getElementById("obs").value.trim();
+      const resultadoDiv = document.getElementById("resultado");
+
+      if (!tecnico || !data) {
+        resultadoDiv.innerHTML = "⚠️ Informe o nome do técnico e a data.";
+        resultadoDiv.style.color = "red";
+        return;
+      }
+
+      if (isNaN(x) || isNaN(y) || x <= 0 || y < 0) {
+        resultadoDiv.innerHTML = "⚠️ Insira valores válidos para x e y.";
+        resultadoDiv.style.color = "red";
+        return;
+      }
+
+      const R = 2500 / ((x * 2) + (y * 0.01));
+      let cor = "black";
+      if (R < 10) cor = "red";
+      else if (R < 50) cor = "orange";
+      else cor = "green";
+
+      resultadoDiv.innerHTML = `Resistência estimada: <strong>${R.toFixed(2)} MΩ</strong>`;
+      resultadoDiv.style.color = cor;
+
+      salvarHistorico(data, tecnico, R.toFixed(2), obs);
+    }
+
+    function salvarHistorico(data, tecnico, R, obs) {
+      historico.unshift({ data, tecnico, R, obs });
+      if (historico.length > 50) historico.pop(); // mantém até 50 registros
+      localStorage.setItem("historicoResistencia", JSON.stringify(historico));
+      atualizarTabela();
+    }
+
+    function atualizarTabela() {
+      const tbody = document.querySelector("#tabelaHistorico tbody");
+      tbody.innerHTML = "";
+      historico.forEach(item => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${item.data}</td>
+          <td>${item.tecnico}</td>
+          <td>${item.R}</td>
+          <td>${item.obs || "-"}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function exportarCSV() {
+      if (historico.length === 0) {
+        alert("Nenhum dado disponível para exportar.");
+        return;
+      }
+
+      let csv = "Data;Técnico;Resistência (MΩ);Observações\n";
+      historico.forEach(item => {
+        csv += `${item.data};${item.tecnico};${item.R};${item.obs || ""}\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "historico_resistencia.csv";
+      link.click();
+    }
+
+    function limparHistorico() {
+      if (confirm("Tem certeza que deseja limpar todo o histórico?")) {
+        localStorage.removeItem("historicoResistencia");
+        historico.length = 0;
+        atualizarTabela();
+      }
+    }
+  </script>
+</body>
+</html>
