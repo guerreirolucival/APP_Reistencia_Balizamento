@@ -198,6 +198,7 @@
     <label for="y">Distância total do circuito (m) (y):</label>
     <input type="number" id="y" placeholder="Ex: 1500" />
 
+    <label for="obs">Tensão de referência: 2.500V </label>
     <label for="obs">Observações técnicas:</label>
     <textarea id="obs" rows="3" placeholder="Ex: Medição realizada sob condições normais."></textarea>
 
@@ -250,7 +251,7 @@
         return;
       }
 
-      if (isNaN(x) || isNaN(y) || x <= 0 || y < 0) {
+      if (isNaN(x) || isNaN(y) || x < 0 || y < 0) {
         resultadoDiv.innerHTML = "⚠️ Insira valores válidos para x e y.";
         resultadoDiv.style.color = "red";
         return;
@@ -318,3 +319,4 @@
   </script>
 </body>
 </html>
+
